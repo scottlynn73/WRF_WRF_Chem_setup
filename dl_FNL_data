@@ -1,0 +1,430 @@
+#!/bin/csh
+#################################################################
+# Csh Script to retrieve 381 online Data files of 'ds083.2',
+# total 755.21M. This script uses 'wget' to download data.
+#
+# Highlight this script by Select All, Copy and Paste it into a file;
+# make the file executable and run it on command line.
+#
+# You need pass in your password as a parameter to execute
+# this script; or you can set an environment variable RDAPSWD
+# if your Operating System supports it.
+#
+# Contact grace@ucar.edu (Grace Peng) for further assistance.
+#################################################################
+
+set pswd = $1
+if(x$pswd == x && `env | grep RDAPSWD` != '') then
+ set pswd = $RDAPSWD
+endif
+if(x$pswd == x) then
+ echo
+ echo Usage: $0 YourPassword
+ echo
+ exit 1
+endif
+set v = `wget -V |grep 'GNU Wget ' | cut -d ' ' -f 3`
+set a = `echo $v | cut -d '.' -f 1`
+set b = `echo $v | cut -d '.' -f 2`
+if(100 * $a + $b > 109) then
+ set opt = 'wget --no-check-certificate'
+else
+ set opt = 'wget'
+endif
+set opt1 = '-O Authentication.log --save-cookies auth.rda_ucar_edu --post-data'
+set opt2 = "email=scott.hamilton@ricardo-aea.com&passwd=$pswd&action=login"
+$opt $opt1="$opt2" https://rda.ucar.edu/cgi-bin/login
+set opt1 = "-N --load-cookies auth.rda_ucar_edu"
+set opt2 = "$opt $opt1 http://rda.ucar.edu/dsrqst/HAMILTON225878/"
+set filelist = ( \
+  fnl_20150629_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150706_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150714_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150721_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150729_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150805_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150813_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150820_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150828_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150904_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150912_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150919_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150927_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150629_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150706_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150714_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150721_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150729_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150805_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150813_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150820_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150828_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150904_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150912_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150919_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150927_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150629_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150707_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150714_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150722_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150729_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150806_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150813_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150821_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150828_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150905_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150912_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150920_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150927_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150629_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150707_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150714_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150722_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150729_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150806_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150813_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150821_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150828_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150905_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150912_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150920_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150927_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150630_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150707_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150715_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150722_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150730_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150806_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150814_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150821_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150829_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150905_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150913_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150920_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150928_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150630_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150707_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150715_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150722_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150730_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150806_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150814_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150821_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150829_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150905_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150913_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150920_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150928_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150630_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150708_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150715_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150723_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150730_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150807_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150814_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150822_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150829_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150906_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150913_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150921_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150928_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150630_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150708_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150715_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150723_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150730_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150807_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150814_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150822_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150829_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150906_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150913_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150921_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150928_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150701_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150708_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150716_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150723_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150731_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150807_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150815_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150822_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150830_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150906_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150914_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150921_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150929_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150701_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150708_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150716_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150723_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150731_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150807_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150815_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150822_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150830_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150906_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150914_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150921_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150929_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150701_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150709_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150716_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150724_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150731_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150808_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150815_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150823_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150830_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150907_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150914_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150922_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150929_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150701_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150709_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150716_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150724_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150731_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150808_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150815_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150823_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150830_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150907_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150914_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150922_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150929_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150702_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150709_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150717_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150724_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150801_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150808_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150816_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150823_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150831_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150907_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150915_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150922_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150930_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150702_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150709_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150717_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150724_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150801_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150808_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150816_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150823_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150831_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150907_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150915_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150922_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150930_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150702_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150710_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150717_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150725_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150801_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150809_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150816_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150824_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150831_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150908_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150915_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150923_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150930_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150702_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150710_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150717_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150725_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150801_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150809_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150816_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150824_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150831_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150908_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150915_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150923_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150930_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150703_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150710_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150718_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150725_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150802_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150809_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150817_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150824_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150901_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150908_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150916_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150923_12_00.grib2.spasub.hamilton225878 \
+  fnl_20151001_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150703_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150710_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150718_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150725_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150802_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150809_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150817_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150824_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150901_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150908_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150916_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150923_18_00.grib2.spasub.hamilton225878 \
+  fnl_20151001_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150703_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150711_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150718_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150726_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150802_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150810_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150817_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150825_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150901_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150909_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150916_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150924_00_00.grib2.spasub.hamilton225878 \
+  fnl_20151001_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150703_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150711_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150718_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150726_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150802_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150810_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150817_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150825_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150901_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150909_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150916_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150924_06_00.grib2.spasub.hamilton225878 \
+  fnl_20151001_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150704_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150711_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150719_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150726_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150803_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150810_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150818_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150825_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150902_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150909_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150917_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150924_12_00.grib2.spasub.hamilton225878 \
+  fnl_20151002_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150704_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150711_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150719_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150726_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150803_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150810_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150818_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150825_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150902_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150909_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150917_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150924_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150704_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150712_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150719_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150727_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150803_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150811_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150818_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150826_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150902_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150910_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150917_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150925_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150704_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150712_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150719_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150727_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150803_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150811_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150818_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150826_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150902_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150910_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150917_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150925_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150705_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150712_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150720_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150727_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150804_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150811_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150819_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150826_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150903_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150910_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150918_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150925_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150705_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150712_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150720_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150727_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150804_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150811_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150819_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150826_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150903_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150910_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150918_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150925_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150705_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150713_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150720_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150728_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150804_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150812_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150819_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150827_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150903_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150911_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150918_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150926_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150705_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150713_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150720_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150728_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150804_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150812_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150819_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150827_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150903_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150911_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150918_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150926_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150706_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150713_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150721_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150728_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150805_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150812_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150820_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150827_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150904_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150911_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150919_00_00.grib2.spasub.hamilton225878 \
+  fnl_20150926_12_00.grib2.spasub.hamilton225878 \
+  fnl_20150706_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150713_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150721_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150728_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150805_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150812_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150820_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150827_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150904_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150911_18_00.grib2.spasub.hamilton225878 \
+  fnl_20150919_06_00.grib2.spasub.hamilton225878 \
+  fnl_20150926_18_00.grib2.spasub.hamilton225878 \
+)
+while($#filelist > 0)
+ set syscmd = "$opt2$filelist[1]"
+ echo "$syscmd ..."
+ $syscmd
+ shift filelist
+end
+
+rm -f auth.rda_ucar_edu Authentication.log
+exit 0
