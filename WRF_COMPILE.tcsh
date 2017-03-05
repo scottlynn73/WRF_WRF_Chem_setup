@@ -194,12 +194,12 @@ wget -nc ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gfs.2017012400/gf
 
 # run WPS
 # if the domain wizard was used copy the namelist into the WPS folder.
-cd ~/Build_WRF/WPS
+cd ~/WRF/WPS
 
 # assuming the namelist.wps file is up to date run geogrid
 ./geogrid.exe >& log.geogrid
 # link to grib data from gfs
-./link_grib.csh ~/Build_WRF/Data/*
+./link_grib.csh ~/WRF/Data/*
 # link to vtable
 ln -sf ungrib/Variable_Tables/Vtable.GFS Vtable
 # run ungrib
