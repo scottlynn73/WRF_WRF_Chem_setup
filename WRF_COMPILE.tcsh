@@ -210,7 +210,11 @@ ln -sf ungrib/Variable_Tables/Vtable.GFS Vtable
 #run WRF
 cd ../WRFV3/run
 ln -sf ../../WPS/met_em* .
-mpirun -np 1 ./real.exe
+mpirun -np 4 ./real.exe
+mpirun -np 4 ./wrf.exe
+
+# tail the process from inside the run folder
+tail -f rsl.out.0000
 
 
 # WRF-Chem emissions data ftp://aftp.fsl.noaa.gov/divisions/taq/global_emissions/
