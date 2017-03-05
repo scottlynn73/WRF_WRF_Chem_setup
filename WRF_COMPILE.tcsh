@@ -215,7 +215,7 @@ mpirun -np 1 ./real.exe
 
 # WRF-Chem emissions data ftp://aftp.fsl.noaa.gov/divisions/taq/global_emissions/
 # WRF-Chem tutorials and useful looking namelists etc (also MOZART, MEGAN data)
-cd ~/Build_WRF/WRFV3/chem
+cd ~/WRF/WRFV3/chem
 mkdir emissions
 wget -nc ftp://aftp.fsl.noaa.gov/divisions/taq/global_emissions/global_emissions_v3_24aug2015.tar.gz
 wget -nc ftp://aftp.fsl.noaa.gov/divisions/taq/global_emissions/prep_chem_sources_v1.5_24aug2015.tar.gz
