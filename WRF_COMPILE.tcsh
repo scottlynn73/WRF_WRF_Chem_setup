@@ -193,6 +193,7 @@ wget -nc ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gfs.2017012400/gf
 
 
 # run WPS
+# if the domain wizard was used copy the namelist into the WPS folder.
 cd ~/Build_WRF/WPS
 
 # assuming the namelist.wps file is up to date run geogrid
