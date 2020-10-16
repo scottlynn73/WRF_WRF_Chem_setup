@@ -131,15 +131,25 @@ mpif90 02_fortran+c+netcdf+mpi_f.o 02_fortran+c+netcdf+mpi_c.o -L${NETCDF}/lib -
 mpirun 
 ./a.out
 
+################################################################
+# The steps below were developed for WRF v3 and WRF-Chem v3
+# At the time these were separate downloads, not they are
+# in the same distribution at http://www2.mmm.ucar.edu/wrf/src/WRFV4.0.TAR.gz
+# Consequently the steps below will need to be amended to 
+# reflect that. It could be that the 'get WRF-Chem' step below is
+# now redundant though I haven't tested that. WRF-Chem doesn't need
+# to be compiled, I think the WRF-Chem folder only had to be unzipped 
+# into the WRF folder, so maybe that happens automatically now with v4.
+#################################################################
 # Download WRF
 cd ~/Build_WRF
-wget -nc http://www2.mmm.ucar.edu/wrf/src/WRFV3.8.1.TAR.gz
+wget -nc http://www2.mmm.ucar.edu/wrf/src/WRFV3.8.1.TAR.gz # or http://www2.mmm.ucar.edu/wrf/src/WRFV4.0.TAR.gz for version 4
 gunzip WRFV3.8.1.TAR.gz
 tar -xf WRFV3.8.1.TAR
 
 # get WRF-Chem
 cd ~/Build_WRF/WRFV3
-wget -nc http://www2.mmm.ucar.edu/wrf/src/WRFV3-Chem-3.8.1.TAR.gz
+wget -nc http://www2.mmm.ucar.edu/wrf/src/WRFV3-Chem-3.8.1.TAR.gz # or http://www2.mmm.ucar.edu/wrf/src/WRFV4.0.TAR.gz for version 4
 gunzip WRFV3-Chem-3.8.1.TAR.gz
 tar -xf WRFV3-Chem-3.8.1.TAR
 
@@ -157,9 +167,9 @@ cd WRFV3
 # test exes have been created
 ls -ls main/*.exe
 
-# download WPS
+# download WPS 
 cd ~/Build_WRF
-wget -nc http://www2.mmm.ucar.edu/wrf/src/WPSV3.8.1.TAR.gz
+wget -nc http://www2.mmm.ucar.edu/wrf/src/WPSV3.8.1.TAR.gz # or http://www2.mmm.ucar.edu/wrf/src/WPSV4.0.TAR.gz
 gunzip WPSV3.8.1.TAR.gz
 tar -xf WPSV3.8.1.TAR
 
@@ -174,8 +184,9 @@ setenv JASPERINC $DIR/grib2/include
 # test exes have been created
 ls -ls *.exe
 
-
-# download basic geography data
+##################################################################
+# download basic geography data- fixed files, not updated each run
+##################################################################
 cd ~/Build_WRF
 mkdir WPS_GEOG
 wget -nc http://www2.mmm.ucar.edu/wrf/src/wps_files/geog_minimum.tar.bz2
@@ -183,7 +194,9 @@ wget -nc http://www2.mmm.ucar.edu/wrf/src/wps_files/geog_minimum.tar.bz2
 tar -xvfj geog.tar
 geog_data_path = ´~/Build_WRF/WPS_GEOG´
 
-# get some test met data
+###########################################################################################################
+# get some test met data- this will probably need to be updated- the date in the files should be updateable
+###########################################################################################################
 mkdir ~/Build_WRF/Data
 cd ~/Build_WRF/Data
 wget -nc ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gfs.2017012400/gfs.t00z.pgrb2.0p50.f000
@@ -191,19 +204,26 @@ wget -nc ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gfs.2017012400/gf
 wget -nc ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gfs.2017012400/gfs.t00z.pgrb2.0p50.f012
 wget -nc ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gfs.2017012400/gfs.t00z.pgrb2.0p50.f018
 
+###################
+# Run WRF test case
+###################
 
-# run WPS
+# First run WPS
 # if the domain wizard was used copy the namelist into the WPS folder.
 cd ~/WRF/WPS
 
 # assuming the namelist.wps file is up to date run geogrid
 ./geogrid.exe >& log.geogrid
+
 # link to grib data from gfs
 ./link_grib.csh ~/WRF/Data/*
+
 # link to vtable
 ln -sf ungrib/Variable_Tables/Vtable.GFS Vtable
+
 # run ungrib
 ./ungrib.exe >& log.ungrib
+
 # run metgrid
 ./metgrid.exe >& log.metgrid
 
@@ -216,12 +236,12 @@ mpirun -np 4 ./wrf.exe
 # tail the process from inside the run folder
 tail -f rsl.out.0000
 
-
+####################
+# Other useful files
+####################
 # WRF-Chem emissions data ftp://aftp.fsl.noaa.gov/divisions/taq/global_emissions/
-# WRF-Chem tutorials and useful looking namelists etc (also MOZART, MEGAN data)
+# also has WRF-Chem tutorials and useful looking namelists etc (also MOZART, MEGAN data)
 cd ~/WRF/WRFV3/chem
 mkdir emissions
 wget -nc ftp://aftp.fsl.noaa.gov/divisions/taq/global_emissions/global_emissions_v3_24aug2015.tar.gz
 wget -nc ftp://aftp.fsl.noaa.gov/divisions/taq/global_emissions/prep_chem_sources_v1.5_24aug2015.tar.gz
-
-
